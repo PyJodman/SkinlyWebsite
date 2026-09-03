@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impressum — Skinly</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FAF8F5'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230E5C57' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='3.4' fill='%230E5C57'/%3E%3C/svg%3E">
+<style>
+@font-face{ font-family:'Playfair Display'; src:url('fonts/playfair-600.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Inter'; src:url('fonts/inter-400.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Inter'; src:url('fonts/inter-600.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+:root{
+  --bg:#FAF8F5; --surface:#FFFFFF; --ink:#14181A; --muted:#5C6461; --line:#E6E1D9;
+  --accent:#0E5C57; --warn-soft:#FBF0DE; --warn-ink:#7A5A12;
+  --font-head:'Playfair Display', Georgia, serif;
+  --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101413; --surface:#171C1A; --ink:#F2EFE9; --muted:#9EA8A3; --line:#2A312E;
+  --accent:#5FD9CB; --warn-soft:#2A2410; --warn-ink:#E3C878;
+}}
+:root[data-theme="dark"]{
+  --bg:#101413; --surface:#171C1A; --ink:#F2EFE9; --muted:#9EA8A3; --line:#2A312E;
+  --accent:#5FD9CB; --warn-soft:#2A2410; --warn-ink:#E3C878;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{ background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased }
+a{ color:var(--accent) }
+h1,h2{ font-family:var(--font-head); font-weight:600; line-height:1.15 }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+.wrap{ max-width:720px; margin-inline:auto; padding:48px 24px 96px }
+.back{ display:inline-block; margin-bottom:32px; font-size:.9rem; font-weight:600 }
+h1{ font-size:2rem; margin-bottom:8px }
+.updated{ color:var(--muted); font-size:.85rem; margin-bottom:32px }
+h2{ font-size:1.15rem; margin-top:32px; margin-bottom:10px }
+p{ margin-bottom:12px }
+.todo{ background:var(--warn-soft); color:var(--warn-ink); border-radius:10px; padding:14px 16px; font-size:.9rem; font-weight:600; margin-bottom:28px }
+.field{ display:flex; gap:8px; padding:6px 0; border-bottom:1px dashed var(--line); font-size:.95rem }
+.field .k{ color:var(--muted); min-width:170px; flex-shrink:0 }
+.field .v{ color:var(--muted); font-style:italic }
+footer{ margin-top:56px; padding-top:20px; border-top:1px solid var(--line); font-size:.82rem; color:var(--muted) }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Zur Startseite</a>
+  <h1>Impressum</h1>
+  <p class="updated">Stand: September 2026</p>
+
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <div class="field"><span class="k">Name / Firma</span><span class="v">David Jahn</span></div>
+  <div class="field"><span class="k">Anschrift</span><span class="v">Thidrekweg 2a, Soest 59494, Germany</span></div>
+  <div class="field"><span class="k">Vertreten durch</span><span class="v">David Jahn</span></div>
+  <div class="field"><span class="k">E-Mail</span><span class="v">davidajahn1104@gmail.com</span></div>
+  <div class="field"><span class="k">Telefon</span><span class="v">+49 15785104536</span></div>
+
+  <h2>Verantwortlich für den Inhalt</h2>
+  <p>gemäß § 18 Abs. 2 MStV: <em>David Jahn Thidrekweg 2a, Soest 59494, Germany</em></p>
+
+  <footer>Kosmetische Beratung. Keine medizinische Diagnose. · © 2026 Skinly</footer>
+</div>
+</body>
+</html>

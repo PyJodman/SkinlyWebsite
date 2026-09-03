@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skinly — Derma Intelligence</title>
+<meta name="description" content="Skinly baut Derma Intelligence: ein transparentes Expertensystem für Hautpflege-Empfehlungen. Kein Blackbox-AI, EU-Hosting, kosmetische Beratung.">
+<meta name="theme-color" content="#FAF8F5">
+<meta property="og:title" content="Skinly — Derma Intelligence">
+<meta property="og:description" content="Hautpflege-Empfehlungen, die man nachprüfen kann. Ein transparentes Expertensystem statt Blackbox-AI.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FAF8F5'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230E5C57' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='16' r='3.4' fill='%230E5C57'/%3E%3C/svg%3E">
+
+<style>
+/* ============ FONTS (self-hosted, no third-party requests) ============ */
+@font-face{
+  font-family:'Playfair Display';
+  src:url('fonts/playfair-600.woff2') format('woff2');
+  font-weight:600; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Inter';
+  src:url('fonts/inter-400.woff2') format('woff2');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Inter';
+  src:url('fonts/inter-500.woff2') format('woff2');
+  font-weight:500; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Inter';
+  src:url('fonts/inter-600.woff2') format('woff2');
+  font-weight:600; font-style:normal; font-display:swap;
+}
+
+/* ============ TOKENS ============ */
+:root{
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface-2:#F3F0EA;
+  --ink:#14181A; --muted:#5C6461; --line:#E6E1D9; --line-strong:#8C8272;
+  --accent:#0E5C57; --accent-hover:#0A4642; --on-accent:#FFFFFF;
+  --accent-soft:#E4EFED;
+  --danger:#9A3B2E; --danger-soft:#F5E7E3;
+  --good:#3C6E4A; --good-soft:#E7F0E7;
+
+  --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow-sm:0 1px 2px rgba(20,24,26,.04), 0 2px 10px rgba(20,24,26,.05);
+  --shadow-md:0 2px 6px rgba(20,24,26,.05), 0 16px 40px rgba(20,24,26,.09);
+  --maxw:1120px;
+
+  --s1:8px; --s2:16px; --s3:24px; --s4:40px; --s5:64px; --s6:96px; --s7:128px;
+
+  --font-head:'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  --dur-1:150ms; --dur-2:220ms; --dur-3:400ms;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101413; --surface:#171C1A; --surface-2:#1D2321;
+    --ink:#F2EFE9; --muted:#9EA8A3; --line:#2A312E; --line-strong:#646E69;
+    --accent:#5FD9CB; --accent-hover:#7FE3D7; --on-accent:#08201E;
+    --accent-soft:#17332F;
+    --danger:#E19686; --danger-soft:#2E1D1A;
+    --good:#8FCB9F; --good-soft:#1B2A1F;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    --shadow-md:0 16px 40px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101413; --surface:#171C1A; --surface-2:#1D2321;
+  --ink:#F2EFE9; --muted:#9EA8A3; --line:#2A312E; --line-strong:#646E69;
+  --accent:#5FD9CB; --accent-hover:#7FE3D7; --on-accent:#08201E;
+  --accent-soft:#17332F;
+  --danger:#E19686; --danger-soft:#2E1D1A;
+  --good:#8FCB9F; --good-soft:#1B2A1F;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  --shadow-md:0 16px 40px rgba(0,0,0,.45);
+}
+
+/* ============ RESET ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:var(--font-body); font-size:16px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img,svg{display:block; max-width:100%}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+input{font:inherit; color:inherit}
+ul{list-style:none}
+h1,h2,h3{font-family:var(--font-head); font-weight:600; line-height:1.08; letter-spacing:-0.01em}
+
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+:focus:not(:focus-visible){outline:none}
+
+.container{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--s3)}
+@media (max-width:640px){ .container{padding-inline:var(--s2)} }
+
+section{ padding-block:var(--s6); scroll-margin-top:88px }
+@media (max-width:768px){ section{padding-block:var(--s5)} }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-body); font-weight:600; font-size:12px;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--accent);
+}
+h2.section-title{ font-size:clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); margin-top:var(--s1); max-width:22ch }
+p.section-lead{ color:var(--muted); font-size:1.05rem; max-width:62ch; margin-top:var(--s2) }
+.header-block{ margin-bottom:var(--s4) }
+
+.icon{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0}
+.icon-lg{width:32px; height:32px; stroke-width:1.5}
+.icon-sm{width:18px; height:18px}
+
+.skip-link{
+  position:absolute; left:var(--s2); top:-100px; z-index:1000;
+  background:var(--accent); color:var(--on-accent); padding:12px 20px;
+  border-radius:var(--radius); font-weight:600; transition:top var(--dur-2) var(--ease);
+}
+.skip-link:focus{ top:var(--s2) }
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 26px; border-radius:var(--radius-full); font-weight:600; font-size:.95rem;
+  cursor:pointer; transition:transform var(--dur-1) var(--ease), background var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+  min-height:44px; white-space:nowrap;
+}
+.btn-primary{ background:var(--accent); color:var(--on-accent); box-shadow:var(--shadow-sm) }
+.btn-primary:hover{ background:var(--accent-hover); box-shadow:var(--shadow-md) }
+.btn-primary:active{ transform:scale(.98) }
+.btn-secondary{ background:transparent; color:var(--ink); border:1.5px solid var(--line-strong) }
+.btn-secondary:hover{ border-color:var(--accent); color:var(--accent) }
+.btn-block{ width:100% }
+@media (prefers-reduced-motion: reduce){ .btn{transition:none} .btn-primary:active{transform:none} }
+
+/* ============ HEADER ============ */
+header.site-header{
+  position:sticky; top:0; z-index:100;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.header-inner{ display:flex; align-items:center; justify-content:space-between; gap:var(--s2); height:76px }
+.wordmark{ display:flex; align-items:center; gap:10px; font-family:var(--font-head); font-weight:600; font-size:1.25rem; color:var(--ink) }
+.wordmark .icon{ color:var(--accent) }
+nav.primary-nav{ display:flex; align-items:center; gap:var(--s4) }
+nav.primary-nav ul{ display:flex; gap:var(--s3) }
+nav.primary-nav a{ font-size:.92rem; font-weight:500; color:var(--muted); padding:8px 2px; border-bottom:2px solid transparent; transition:color var(--dur-2), border-color var(--dur-2) }
+nav.primary-nav a:hover{ color:var(--ink); border-color:var(--line) }
+.header-actions{ display:flex; align-items:center; gap:var(--s2) }
+
+.lang-toggle{ display:flex; border:1.5px solid var(--line-strong); border-radius:var(--radius-full); padding:3px; gap:2px }
+.lang-toggle button{ padding:6px 13px; border-radius:var(--radius-full); font-size:.82rem; font-weight:600; color:var(--muted); min-height:32px; transition:background var(--dur-2), color var(--dur-2) }
+.lang-toggle button[aria-pressed="true"]{ background:var(--accent); color:var(--on-accent) }
+
+.nav-toggle{ display:none; padding:8px; }
+@media (max-width:900px){
+  nav.primary-nav{ display:none }
+  .header-actions .btn-primary.header-cta{ display:none }
+  .nav-toggle{ display:inline-flex }
+}
+
+.mobile-sheet{
+  position:fixed; inset:0; z-index:200; background:var(--bg);
+  display:flex; flex-direction:column; padding:var(--s2) var(--s3) var(--s4);
+  transform:translateX(100%); transition:transform var(--dur-3) var(--ease);
+  visibility:hidden;
+}
+.mobile-sheet.is-open{ transform:translateX(0); visibility:visible }
+@media (prefers-reduced-motion: reduce){ .mobile-sheet{transition:none} }
+.mobile-sheet-top{ display:flex; align-items:center; justify-content:space-between; height:76px }
+.mobile-sheet nav{ display:flex; flex-direction:column; gap:var(--s1); margin-top:var(--s3) }
+.mobile-sheet nav a{ font-family:var(--font-head); font-size:1.6rem; padding:14px 4px; border-bottom:1px solid var(--line) }
+.mobile-sheet-foot{ margin-top:auto; display:flex; flex-direction:column; gap:var(--s2) }
+.icon-btn{ display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:var(--radius-full) }
+.icon-btn:hover{ background:var(--surface-2) }
+
+/* ============ REVEAL ============ */
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease) }
+.reveal.is-visible{ opacity:1; transform:translateY(0) }
+.reveal-group .reveal:nth-child(2){ transition-delay:60ms }
+.reveal-group .reveal:nth-child(3){ transition-delay:120ms }
+.reveal-group .reveal:nth-child(4){ transition-delay:180ms }
+.reveal-group .reveal:nth-child(5){ transition-delay:240ms }
+.reveal-group .reveal:nth-child(6){ transition-delay:300ms }
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity:1; transform:none; transition:none }
+}
+
+/* ============ HERO ============ */
+.hero{ padding-block:var(--s5) var(--s6) }
+.hero-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:var(--s5); align-items:center }
+@media (max-width:960px){ .hero-grid{ grid-template-columns:1fr; gap:var(--s4) } }
+.hero-eyebrow{ margin-bottom:var(--s2) }
+.hero h1{ font-size:clamp(2.1rem, 1.5rem + 2.6vw, 3.4rem) }
+.hero p.lead{ margin-top:var(--s2); font-size:1.15rem; color:var(--muted); max-width:52ch }
+.hero-ctas{ display:flex; gap:var(--s2); margin-top:var(--s3); flex-wrap:wrap }
+.hero-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s2); margin-top:var(--s5); padding-top:var(--s3); border-top:1px solid var(--line) }
+@media (max-width:640px){ .hero-stats{ grid-template-columns:repeat(2,1fr) } }
+.stat-value{ font-family:var(--font-head); font-size:1.7rem; font-variant-numeric:tabular-nums; color:var(--accent) }
+.stat-label{ font-size:.82rem; color:var(--muted); margin-top:2px }
+
+.hero-visual{ position:relative; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center }
+.hero-visual .mesh{
+  position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+             radial-gradient(circle at 68% 72%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%);
+}
+.hero-visual svg.reticle{ width:78%; height:78%; color:var(--accent) }
+.hero-visual .ring{ fill:none; stroke:currentColor; stroke-width:1; opacity:.35 }
+.hero-visual .ring-2{ opacity:.55 }
+.hero-visual .tick{ stroke:currentColor; stroke-width:1.5; opacity:.5 }
+.hero-visual .node{ fill:var(--surface); stroke:var(--accent); stroke-width:2 }
+.hero-visual .node-fill{ fill:var(--accent) }
+.hero-visual .pulse{ transform-origin:center; animation:pulse 3s ease-in-out infinite }
+@keyframes pulse{ 0%,100%{opacity:.25} 50%{opacity:.6} }
+@media (prefers-reduced-motion: reduce){ .hero-visual .pulse{ animation:none; opacity:.4 } }
+
+/* ============ CARDS / GRIDS ============ */
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3) }
+.grid-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s3) }
+.grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s2) }
+@media (max-width:860px){ .grid-3, .grid-2{ grid-template-columns:1fr } .grid-4{ grid-template-columns:repeat(2,1fr) } }
+@media (max-width:520px){ .grid-4{ grid-template-columns:1fr 1fr } }
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:var(--s3); box-shadow:var(--shadow-sm);
+}
+.card-icon{
+  width:48px; height:48px; border-radius:var(--radius); background:var(--accent-soft); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; margin-bottom:var(--s2);
+}
+.card h3{ font-size:1.1rem; margin-bottom:8px }
+.card p{ color:var(--muted); font-size:.95rem }
+
+.bg-alt{ background:var(--surface-2) }
+
+/* Problem section — plain hairline cards, no icon boxes (kept distinct from tech cards) */
+.problem-card{ padding:var(--s3) 0 }
+.problem-card + .problem-card{ border-top:1px solid var(--line) }
+@media (min-width:861px){
+  .problem-card{ border-top:none !important; padding:0 }
+}
+
+/* Steps */
+.steps{ position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s3); margin-top:var(--s4) }
+@media (max-width:860px){ .steps{ grid-template-columns:1fr; gap:var(--s2) } }
+.step{ position:relative; padding-top:var(--s2) }
+.step-num{
+  display:flex; align-items:center; justify-content:center; width:40px; height:40px;
+  border-radius:50%; background:var(--surface); border:1.5px solid var(--accent); color:var(--accent);
+  font-family:var(--font-head); font-weight:600; margin-bottom:var(--s2);
+}
+.step h3{ font-size:1.05rem; margin-bottom:6px }
+.step p{ color:var(--muted); font-size:.92rem }
+.steps::before{
+  content:''; position:absolute; top:38px; left:5%; right:5%; height:1px; background:var(--line);
+}
+@media (max-width:860px){ .steps::before{ display:none } }
+
+/* Tech grid */
+.tech-card{ display:flex; flex-direction:column }
+
+/* Privacy */
+.privacy-list{ display:flex; flex-direction:column; gap:var(--s3); margin-top:var(--s4) }
+.privacy-item{ display:flex; gap:var(--s2); align-items:flex-start; padding-bottom:var(--s3); border-bottom:1px solid var(--line) }
+.privacy-item:last-child{ border-bottom:none; padding-bottom:0 }
+.privacy-item .card-icon{ margin-bottom:0; flex-shrink:0 }
+.privacy-item h3{ font-size:1.02rem; margin-bottom:4px }
+.privacy-item p{ color:var(--muted); font-size:.92rem; max-width:60ch }
+
+/* Roadmap */
+.roadmap{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin-top:var(--s4) }
+@media (max-width:860px){ .roadmap{ grid-template-columns:1fr } }
+.roadmap-col{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:var(--s3) }
+.roadmap-col-head{ display:flex; align-items:center; gap:8px; margin-bottom:var(--s2); font-weight:600 }
+.roadmap-col.done .roadmap-col-head{ color:var(--good) }
+.roadmap-col.progress .roadmap-col-head{ color:var(--accent) }
+.roadmap-col.planned .roadmap-col-head{ color:var(--muted) }
+.roadmap-col ul{ display:flex; flex-direction:column; gap:10px }
+.roadmap-col li{ font-size:.9rem; color:var(--muted); padding-left:18px; position:relative }
+.roadmap-col li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.5 }
+
+/* ============ DEMO ============ */
+.demo-shell{ display:grid; grid-template-columns:400px 1fr; gap:var(--s4); margin-top:var(--s4); align-items:start }
+@media (max-width:960px){ .demo-shell{ grid-template-columns:1fr } }
+.demo-panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:var(--s3); box-shadow:var(--shadow-sm); position:sticky; top:96px }
+@media (max-width:960px){ .demo-panel{ position:static } }
+.demo-panel h3{ font-size:1rem; margin-bottom:var(--s2) }
+
+.slider-row{ margin-bottom:var(--s2) }
+.slider-row label{ display:flex; justify-content:space-between; font-size:.88rem; font-weight:500; margin-bottom:8px }
+.slider-row output{ font-variant-numeric:tabular-nums; color:var(--accent); font-weight:600 }
+input[type="range"]{
+  -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:var(--radius-full);
+  background:var(--line-strong); outline-offset:6px;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+  background:var(--accent); border:3px solid var(--surface); box-shadow:0 1px 4px rgba(0,0,0,.25); cursor:pointer;
+}
+input[type="range"]::-moz-range-thumb{
+  width:22px; height:22px; border-radius:50%; background:var(--accent); border:3px solid var(--surface); box-shadow:0 1px 4px rgba(0,0,0,.25); cursor:pointer;
+}
+input[type="range"]::-moz-range-track{ height:6px; border-radius:var(--radius-full); background:var(--line-strong) }
+
+.budget-row{ margin-top:var(--s3); padding-top:var(--s3); border-top:1px solid var(--line) }
+.budget-row label{ display:block; font-size:.88rem; font-weight:500; margin-bottom:8px }
+.budget-input-wrap{ display:flex; align-items:center; border:1.5px solid var(--line-strong); border-radius:var(--radius); overflow:hidden }
+.budget-input-wrap span{ padding:0 12px; color:var(--muted); font-weight:600; background:var(--surface-2); align-self:stretch; display:flex; align-items:center }
+.budget-input-wrap input{ flex:1; border:0; padding:11px 12px; background:transparent; min-height:44px; width:100% }
+.budget-input-wrap input:focus{ outline:none }
+.budget-input-wrap:focus-within{ border-color:var(--accent) }
+
+.presets{ display:flex; flex-direction:column; gap:8px; margin-top:var(--s3); padding-top:var(--s3); border-top:1px solid var(--line) }
+.preset-btn{
+  text-align:left; padding:11px 14px; border:1.5px solid var(--line-strong); border-radius:var(--radius);
+  font-size:.85rem; font-weight:500; transition:border-color var(--dur-2), background var(--dur-2); min-height:44px;
+}
+.preset-btn:hover{ border-color:var(--accent); background:var(--accent-soft) }
+
+.demo-disclaimer{
+  display:flex; gap:8px; align-items:flex-start; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--radius); padding:12px 14px; margin-bottom:var(--s3); font-size:.82rem; color:var(--muted);
+}
+.demo-disclaimer .icon{ flex-shrink:0; margin-top:1px; color:var(--muted) }
+
+.result-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:var(--s3); box-shadow:var(--shadow-sm); margin-bottom:var(--s2) }
+.result-card h3{ font-size:1rem; margin-bottom:var(--s2); display:flex; align-items:center; gap:8px }
+.maintenance-note{ display:flex; gap:10px; background:var(--good-soft); color:var(--good); border-radius:var(--radius); padding:12px 14px; font-size:.88rem; font-weight:500; margin-bottom:var(--s2) }
+
+.routine-slot{ display:flex; gap:var(--s2); padding:12px 0; border-bottom:1px solid var(--line) }
+.routine-slot:last-child{ border-bottom:none }
+.slot-badge{ flex-shrink:0; width:74px; font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding-top:2px }
+.slot-body{ flex:1 }
+.slot-body .pname{ font-weight:600; font-size:.95rem }
+.slot-body .pmeta{ font-size:.82rem; color:var(--muted); margin-top:2px }
+.daytime-badges{ display:flex; gap:6px; margin-top:6px }
+.daytime-badge{ font-size:.7rem; font-weight:600; padding:3px 9px; border-radius:var(--radius-full); background:var(--accent-soft); color:var(--accent) }
+.slot-price{ font-variant-numeric:tabular-nums; font-weight:600; font-size:.9rem; white-space:nowrap; padding-top:2px }
+.routine-total{ display:flex; justify-content:space-between; padding-top:var(--s2); margin-top:4px; font-weight:600 }
+.routine-note{ font-size:.82rem; color:var(--muted); margin-top:var(--s2); padding-top:var(--s2); border-top:1px dashed var(--line) }
+
+.match-item{ padding:14px 0; border-bottom:1px solid var(--line) }
+.match-item:last-child{ border-bottom:none }
+.match-head{ display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap }
+.match-name{ font-weight:600; font-size:.98rem }
+.match-band{ font-size:.72rem; font-weight:700; padding:4px 11px; border-radius:var(--radius-full); white-space:nowrap }
+.band-strong{ background:var(--accent); color:var(--on-accent) }
+.band-good{ background:var(--accent-soft); color:var(--accent) }
+.band-some{ background:var(--surface-2); color:var(--muted) }
+.match-reason{ font-size:.88rem; color:var(--muted); margin-top:6px }
+.match-horizon{ font-size:.78rem; color:var(--muted); margin-top:4px; font-style:italic }
+.match-price{ font-size:.82rem; font-variant-numeric:tabular-nums; margin-top:6px; font-weight:600 }
+
+/* Investor strip */
+.stat-strip{ display:flex; flex-wrap:wrap; gap:0; margin-top:var(--s5); border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+.stat-strip-item{ flex:1; min-width:150px; text-align:center; padding:var(--s3) var(--s2); border-left:1px solid var(--line) }
+.stat-strip-item:first-child{ border-left:none }
+.stat-strip-item .stat-value{ font-size:1.4rem }
+@media (max-width:640px){ .stat-strip-item{ min-width:50%; border-left:none; border-top:1px solid var(--line) } .stat-strip-item:nth-child(odd){ border-right:1px solid var(--line) } }
+
+/* Contact */
+.contact-band{ background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+.contact-inner{ text-align:center; max-width:640px; margin-inline:auto }
+.contact-inner h2{ font-size:clamp(1.7rem,1.3rem+1.6vw,2.4rem) }
+.contact-inner p{ color:var(--muted); margin-top:var(--s2); font-size:1.05rem }
+.contact-inner .btn{ margin-top:var(--s3) }
+.contact-secondary{ margin-top:var(--s2); font-size:.88rem; color:var(--muted) }
+.contact-secondary a{ color:var(--accent); font-weight:600; border-bottom:1px solid transparent; transition:border-color var(--dur-2) }
+.contact-secondary a:hover{ border-color:var(--accent) }
+.mail-fallback{ background:var(--accent-soft); color:var(--accent); justify-content:center; margin-top:var(--s3); margin-bottom:0; text-align:left }
+.contact-email-plain{ margin-top:var(--s2); font-size:.95rem; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap }
+.contact-email-plain strong{ color:var(--ink); font-weight:600 }
+.contact-copy-btn{ display:inline-flex; align-items:center; gap:5px; background:none; border:1px solid var(--line); border-radius:var(--radius-full); padding:3px 11px; font-size:.82rem; font-weight:600; color:var(--accent); cursor:pointer; transition:border-color var(--dur-2), background var(--dur-2) }
+.contact-copy-btn:hover{ border-color:var(--accent); background:var(--accent-soft) }
+
+/* Footer */
+footer.site-footer{ padding-block:var(--s4); }
+.footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--s2) }
+.footer-brand{ display:flex; align-items:center; gap:8px; font-family:var(--font-head); font-weight:600 }
+.footer-brand .icon{ color:var(--accent) }
+.footer-links{ display:flex; gap:var(--s3); font-size:.85rem; color:var(--muted) }
+.footer-links a:hover{ color:var(--accent) }
+.footer-meta{ font-size:.8rem; color:var(--muted); margin-top:var(--s3); padding-top:var(--s3); border-top:1px solid var(--line); text-align:center }
+
+/* Utility */
+.mt-0{margin-top:0}
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
+[hidden]{ display:none !important }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="a11y.skipLink">Zum Inhalt springen</a>
+
+<!-- ============ SVG SPRITE (icons, decorative) ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-scan-face" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.929 4.929 19.07 19.071"/></symbol>
+<symbol id="i-droplets" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></symbol>
+<symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></symbol>
+<symbol id="i-list-checks" viewBox="0 0 24 24"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-shield-alert" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+<symbol id="i-msg-off" viewBox="0 0 24 24"><path d="M19 19H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.7.7 0 0 1 2 21.286V5a2 2 0 0 1 1.184-1.826"/><path d="m2 2 20 20"/><path d="M8.656 3H20a2 2 0 0 1 2 2v11.344"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-circle-dashed" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="m19 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1"/><path d="m5 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M7 21h10"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+</defs>
+</svg>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#main" class="wordmark">
+      <svg class="icon icon-lg" aria-hidden="true"><use href="#i-target"/></svg>
+      <span>Skinly</span>
+    </a>
+    <nav class="primary-nav" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#problem" data-i18n="nav.problem">Problem</a></li>
+        <li><a href="#how" data-i18n="nav.how">So funktioniert's</a></li>
+        <li><a href="#tech" data-i18n="nav.tech">Technologie</a></li>
+        <li><a href="#privacy" data-i18n="nav.privacy">Datenschutz</a></li>
+        <li><a href="#demo" data-i18n="nav.demo">Demo</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-toggle" role="group" aria-label="Sprache / Language">
+        <button type="button" data-lang-btn="de" aria-pressed="true">DE</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+      </div>
+      <a href="#contact" class="btn btn-primary header-cta" data-i18n="nav.cta">Kontakt aufnehmen</a>
+      <button type="button" class="icon-btn nav-toggle" id="navToggleBtn" aria-expanded="false" aria-controls="mobileSheet" aria-label="Menü öffnen" data-i18n-attr="aria-label:a11y.openMenu">
+        <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MOBILE SHEET ============ -->
+<div class="mobile-sheet" id="mobileSheet" role="dialog" aria-modal="true" aria-label="Menü">
+  <div class="mobile-sheet-top">
+    <a href="#main" class="wordmark">
+      <svg class="icon icon-lg" aria-hidden="true"><use href="#i-target"/></svg>
+      <span>Skinly</span>
+    </a>
+    <button type="button" class="icon-btn" id="navCloseBtn" aria-label="Menü schließen" data-i18n-attr="aria-label:a11y.closeMenu">
+      <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+    </button>
+  </div>
+  <nav aria-label="Mobile Navigation">
+    <a href="#problem" class="mobile-link" data-i18n="nav.problem">Problem</a>
+    <a href="#how" class="mobile-link" data-i18n="nav.how">So funktioniert's</a>
+    <a href="#tech" class="mobile-link" data-i18n="nav.tech">Technologie</a>
+    <a href="#privacy" class="mobile-link" data-i18n="nav.privacy">Datenschutz</a>
+    <a href="#demo" class="mobile-link" data-i18n="nav.demo">Demo</a>
+  </nav>
+  <div class="mobile-sheet-foot">
+    <a href="#contact" class="btn btn-primary btn-block mobile-link" data-i18n="nav.cta">Kontakt aufnehmen</a>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow">Pre-Launch · MVP in Entwicklung</span>
+      <h1 data-i18n="hero.h1">Hautpflege-Empfehlungen, die man nachprüfen kann.</h1>
+      <p class="lead" data-i18n="hero.lead">Ein Gesichtsscan liefert sechs Hautwerte. Ein transparentes Expertensystem — keine Blackbox — baut daraus eine vollständige Routine im Rahmen deines Budgets und begründet jede einzelne Empfehlung.</p>
+      <div class="hero-ctas">
+        <a href="#demo" class="btn btn-primary" data-i18n="hero.ctaDemo">Demo ansehen</a>
+        <a href="#contact" class="btn btn-secondary" data-i18n="hero.ctaContact">Kontakt aufnehmen</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-value">6</div>
+          <div class="stat-label" data-i18n="hero.stat1">Hautwerte</div>
+        </div>
+        <div>
+          <div class="stat-value">11</div>
+          <div class="stat-label" data-i18n="hero.stat2">Sicherheitsfilter</div>
+        </div>
+        <div>
+          <div class="stat-value">EU</div>
+          <div class="stat-label" data-i18n="hero.stat3">Hosting</div>
+        </div>
+        <div>
+          <div class="stat-value">0</div>
+          <div class="stat-label" data-i18n="hero.stat4">Werbedeals</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="mesh"></div>
+      <svg class="reticle" viewBox="0 0 200 200">
+        <circle class="ring" cx="100" cy="100" r="92"/>
+        <circle class="ring ring-2" cx="100" cy="100" r="68"/>
+        <circle class="ring" cx="100" cy="100" r="44"/>
+        <g class="pulse">
+          <circle class="ring ring-2" cx="100" cy="100" r="80"/>
+        </g>
+        <line class="tick" x1="100" y1="4" x2="100" y2="20"/>
+        <line class="tick" x1="100" y1="180" x2="100" y2="196"/>
+        <line class="tick" x1="4" y1="100" x2="20" y2="100"/>
+        <line class="tick" x1="180" y1="100" x2="196" y2="100"/>
+        <circle class="node" cx="100" cy="100" r="6"/>
+        <circle class="node-fill" cx="152" cy="66" r="4"/>
+        <circle class="node-fill" cx="54" cy="130" r="3"/>
+        <circle class="node-fill" cx="140" cy="150" r="3.5"/>
+        <circle class="node-fill" cx="62" cy="58" r="3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section id="problem" class="bg-alt">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="problem.eyebrow">Das Problem</span>
+      <h2 class="section-title" data-i18n="problem.title">Hautpflege-Beratung, der man nicht trauen kann</h2>
+      <p class="section-lead" data-i18n="problem.lead">Vier Wege, wie Menschen heute zu Produkten kommen — und warum keiner davon wirklich erklärt, warum ein Produkt passt.</p>
+    </div>
+    <div class="grid-2 reveal-group" style="row-gap:0">
+      <div class="problem-card reveal">
+        <h3 data-i18n="problem.card1.title">Influencer-Empfehlungen</h3>
+        <p data-i18n="problem.card1.body">Verkaufen gut, sagen aber nichts über die eigene Haut aus — was bei einer Person wirkt, muss bei einer anderen nicht wirken.</p>
+      </div>
+      <div class="problem-card reveal">
+        <h3 data-i18n="problem.card2.title">Quiz-Funnels</h3>
+        <p data-i18n="problem.card2.body">Am Ende landen die meisten Nutzer:innen bei denselben vier Produkten — die Fragen wirken individuell, das Ergebnis ist es selten.</p>
+      </div>
+      <div class="problem-card reveal">
+        <h3 data-i18n="problem.card3.title">Blackbox-KI</h3>
+        <p data-i18n="problem.card3.body">Liefert eine Empfehlung, aber keine Begründung. Ohne nachvollziehbare Logik lässt sich eine Empfehlung nicht überprüfen — nur glauben oder nicht.</p>
+      </div>
+      <div class="problem-card reveal">
+        <h3 data-i18n="problem.card4.title">Fehlende Regulatorik-Prüfung</h3>
+        <p data-i18n="problem.card4.body">Kaum eine App prüft, ob ein Inhaltsstoff in der angegebenen Konzentration überhaupt als Kosmetikum zulässig ist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="how.eyebrow">So funktioniert's</span>
+      <h2 class="section-title" data-i18n="how.title">Vom Scan zur begründeten Routine</h2>
+      <p class="section-lead" data-i18n="how.lead">Vier Schritte, jeder einzelne nachvollziehbar.</p>
+    </div>
+    <div class="steps reveal-group">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3 data-i18n="how.step1.title">Scan</h3>
+        <p data-i18n="how.step1.body">Ein Foto wird verschlüsselt an einen privaten EU-Speicher übertragen und automatisch gelöscht — standardmäßig nach 24 Stunden.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3 data-i18n="how.step2.title">Sechs Hautwerte</h3>
+        <p data-i18n="how.step2.body">Unreinheiten, Rötungen, Trockenheit, ölige Haut, Pigmentflecken, Augenringe — jeweils auf einer Skala von 0 bis 100.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3 data-i18n="how.step3.title">Expertensystem</h3>
+        <p data-i18n="how.step3.body">Problem-zu-Wirkstoff-Zuordnung nach Schweregrad, elf Sicherheitsfilter, anschließend eine Bewertung jedes verbliebenen Produkts.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <h3 data-i18n="how.step4.title">Routine</h3>
+        <p data-i18n="how.step4.body">Sechs Slots — Reinigung, ein bis zwei Wirkstoffprodukte, Feuchtigkeitspflege, Sonnenschutz, optional Augenpflege — per Suche im Rahmen des Budgets ausgewählt, inklusive AM/PM-Reihenfolge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEMO ============ -->
+<section id="demo" class="bg-alt">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="demo.eyebrow">Demo</span>
+      <h2 class="section-title" data-i18n="demo.title">Probier die Logik selbst aus</h2>
+      <p class="section-lead" data-i18n="demo.lead">Bewege die Regler und sieh, wie sich Routine und Empfehlungen verändern.</p>
+    </div>
+
+    <div class="demo-shell">
+      <div class="demo-panel reveal">
+        <h3 data-i18n="demo.panelTitle">Hautwerte</h3>
+
+        <div class="slider-row">
+          <label for="s-acne"><span data-i18n="metric.acne">Unreinheiten (Akne)</span> <output id="o-acne">40</output></label>
+          <input type="range" id="s-acne" min="0" max="100" value="40" step="1">
+        </div>
+        <div class="slider-row">
+          <label for="s-redness"><span data-i18n="metric.redness">Rötungen</span> <output id="o-redness">25</output></label>
+          <input type="range" id="s-redness" min="0" max="100" value="25" step="1">
+        </div>
+        <div class="slider-row">
+          <label for="s-dryness"><span data-i18n="metric.dryness">Trockenheit</span> <output id="o-dryness">20</output></label>
+          <input type="range" id="s-dryness" min="0" max="100" value="20" step="1">
+        </div>
+        <div class="slider-row">
+          <label for="s-oiliness"><span data-i18n="metric.oiliness">Ölige Haut</span> <output id="o-oiliness">35</output></label>
+          <input type="range" id="s-oiliness" min="0" max="100" value="35" step="1">
+        </div>
+        <div class="slider-row">
+          <label for="s-pigmentation"><span data-i18n="metric.pigmentation">Pigmentflecken</span> <output id="o-pigmentation">15</output></label>
+          <input type="range" id="s-pigmentation" min="0" max="100" value="15" step="1">
+        </div>
+        <div class="slider-row">
+          <label for="s-eye_bags"><span data-i18n="metric.eye_bags">Augenringe</span> <output id="o-eye_bags">20</output></label>
+          <input type="range" id="s-eye_bags" min="0" max="100" value="20" step="1">
+        </div>
+
+        <div class="budget-row">
+          <label for="s-budget" data-i18n="demo.budgetLabel">Budget (einmalig)</label>
+          <div class="budget-input-wrap">
+            <span>€</span>
+            <input type="number" id="s-budget" min="20" max="300" value="130" step="5" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="presets">
+          <button type="button" class="preset-btn" data-preset="oily" data-i18n="demo.preset1">Ölige Haut &amp; Unreinheiten</button>
+          <button type="button" class="preset-btn" data-preset="dry" data-i18n="demo.preset2">Trocken &amp; sensibel</button>
+          <button type="button" class="preset-btn" data-preset="healthy" data-i18n="demo.preset3">Gesunde Haut</button>
+        </div>
+      </div>
+
+      <div class="demo-results reveal">
+        <div class="demo-disclaimer">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-shield-alert"/></svg>
+          <span data-i18n="demo.disclaimer">Illustrative Simulation · vereinfachte Regeln · fiktive Beispielprodukte. Keine echte Analyse, keine medizinische Aussage.</span>
+        </div>
+
+        <div id="demoOutput" aria-live="polite">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TECHNOLOGY ============ -->
+<section id="tech">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="tech.eyebrow">Technologie</span>
+      <h2 class="section-title" data-i18n="tech.title">Warum das anders ist</h2>
+      <p class="section-lead" data-i18n="tech.lead">Sechs Eigenschaften, die im Code erzwungen werden — nicht nur im Marketing behauptet.</p>
+    </div>
+    <div class="grid-3 reveal-group">
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg></div>
+        <h3 data-i18n="tech.card1.title">Eine transparente Einheit</h3>
+        <p data-i18n="tech.card1.body">Ein Score ist die erwartete Verbesserung in Punkten auf derselben 0–100-Skala, die der Scan liefert — vergleichbar über Nutzer:innen hinweg, mit Aufschlüsselung pro Hautproblem.</p>
+      </div>
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></div>
+        <h3 data-i18n="tech.card2.title">Vollständige Suche, keine Abkürzung</h3>
+        <p data-i18n="tech.card2.body">Die Routine wird per exakter Suche gefunden, ohne den Kandidatenpool zu kürzen — verifiziert gegen ein unabhängiges Referenzmodell über 118 Testprofile, 0 Abweichungen.</p>
+      </div>
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
+        <h3 data-i18n="tech.card3.title">Kosmetik-Allowlist</h3>
+        <p data-i18n="tech.card3.body">Verschreibungspflichtige Wirkstoffe sind strukturell ausgeschlossen — auch wenn man sie dem System direkt vorlegt. Unbekannte Daten schließen aus, statt als sicher zu gelten.</p>
+      </div>
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-shield-alert"/></svg></div>
+        <h3 data-i18n="tech.card4.title">Fail-closed bei Allergien</h3>
+        <p data-i18n="tech.card4.body">Fehlt die INCI-Deklaration eines Produkts und wird eine Sensitivität gemeldet, wird automatisch ausgeschlossen. Unklare Begriffe werden offengelegt, nicht stillschweigend ignoriert.</p>
+      </div>
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-msg-off"/></svg></div>
+        <h3 data-i18n="tech.card5.title">Keine Heilversprechen</h3>
+        <p data-i18n="tech.card5.body">„Zielt auf das Erscheinungsbild von X ab“ — niemals „behandelt“, „heilt“ oder „bekämpft“. Für den gesamten Katalog durch die Testsuite erzwungen, nicht nur redaktionell empfohlen.</p>
+      </div>
+      <div class="card tech-card reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></div>
+        <h3 data-i18n="tech.card6.title">Kalibrierung eingefroren</h3>
+        <p data-i18n="tech.card6.body">36 Stellschrauben sind in einer Registry erfasst; eine neue, nicht erfasste Konstante lässt den Build fehlschlagen. Werte ändern sich nur mit gemessenen Daten, nie nach Gefühl.</p>
+      </div>
+    </div>
+
+    <div class="stat-strip reveal">
+      <div class="stat-strip-item">
+        <div class="stat-value">~600</div>
+        <div class="stat-label" data-i18n="tech.stat1">automatisierte Tests</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-value">&lt;150ms</div>
+        <div class="stat-label" data-i18n="tech.stat2">pro Empfehlung</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-value">&lt;1s</div>
+        <div class="stat-label" data-i18n="tech.stat3">volle Routinensuche</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-value">50</div>
+        <div class="stat-label" data-i18n="tech.stat4">Produkte im Testkatalog</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-value">36</div>
+        <div class="stat-label" data-i18n="tech.stat5">registrierte Stellschrauben</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRIVACY ============ -->
+<section id="privacy" class="bg-alt">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="privacy.eyebrow">Datenschutz &amp; Compliance</span>
+      <h2 class="section-title" data-i18n="privacy.title">Dein Gesicht ist biometrische Daten. Wir gehen entsprechend sorgfältig damit um.</h2>
+      <p class="section-lead" data-i18n="privacy.lead">Vier Grundsätze, die die Handhabung deiner Daten bestimmen.</p>
+    </div>
+    <div class="privacy-list reveal-group">
+      <div class="privacy-item reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-scan-face"/></svg></div>
+        <div>
+          <h3 data-i18n="privacy.item1.title">Biometrische Daten nach Art. 9 DSGVO</h3>
+          <p data-i18n="privacy.item1.body">Gesichtsfotos gelten als besondere Kategorie personenbezogener Daten — deshalb ist die Verarbeitung an eine ausdrückliche, versionierte und jederzeit widerrufbare Einwilligung gebunden.</p>
+        </div>
+      </div>
+      <div class="privacy-item reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></div>
+        <div>
+          <h3 data-i18n="privacy.item2.title">Kurze Speicherung, EU-Hosting</h3>
+          <p data-i18n="privacy.item2.body">Fotos werden ausschließlich zur Berechnung der Hautwerte gespeichert, auf einem privaten EU-Server, und automatisch gelöscht — standardmäßig nach 24 Stunden, oft früher.</p>
+        </div>
+      </div>
+      <div class="privacy-item reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
+        <div>
+          <h3 data-i18n="privacy.item3.title">Gesundheitsdaten bleiben anfrage-gebunden</h3>
+          <p data-i18n="privacy.item3.body">Gemeldete Sensitivitäten und Allergien sind Gesundheitsdaten nach Art. 9 DSGVO — sie werden nur für die jeweilige Anfrage verwendet, nie geloggt oder gespeichert ohne separate Einwilligung.</p>
+        </div>
+      </div>
+      <div class="privacy-item reveal">
+        <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart-pulse"/></svg></div>
+        <div>
+          <h3 data-i18n="privacy.item4.title">Kosmetische Beratung, keine Diagnose</h3>
+          <p data-i18n="privacy.item4.body">Die App diagnostiziert, behandelt oder heilt keine medizinische Erkrankung und ersetzt keinen Arzt- oder Dermatologiebesuch.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap">
+  <div class="container">
+    <div class="header-block reveal">
+      <span class="eyebrow" data-i18n="roadmap.eyebrow">Status</span>
+      <h2 class="section-title" data-i18n="roadmap.title">Wo wir stehen</h2>
+      <p class="section-lead" data-i18n="roadmap.lead">Ehrlich gesagt: vorproduktiv. Das hier ist der aktuelle Stand.</p>
+    </div>
+    <div class="roadmap reveal-group">
+      <div class="roadmap-col done reveal">
+        <div class="roadmap-col-head">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-circle-check"/></svg>
+          <span data-i18n="roadmap.doneTitle">Fertig</span>
+        </div>
+        <ul>
+          <li data-i18n="roadmap.done1">Expertensystem &amp; Scoring-Logik</li>
+          <li data-i18n="roadmap.done2">API v1 spezifiziert &amp; eingefroren</li>
+          <li data-i18n="roadmap.done3">6-Slot-Routinenbau unter Budget</li>
+          <li data-i18n="roadmap.done4">Fortschrittsvergleich zwischen Scans</li>
+          <li data-i18n="roadmap.done5">Mobile-App-Grundgerüst (Expo)</li>
+        </ul>
+      </div>
+      <div class="roadmap-col progress reveal">
+        <div class="roadmap-col-head">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-circle-dashed"/></svg>
+          <span data-i18n="roadmap.progressTitle">In Arbeit</span>
+        </div>
+        <ul>
+          <li data-i18n="roadmap.progress1">Echter Produktkatalog statt 50 Testprodukten</li>
+          <li data-i18n="roadmap.progress2">Anbindung eines echten Skin-Analysis-Providers</li>
+        </ul>
+      </div>
+      <div class="roadmap-col planned reveal">
+        <div class="roadmap-col-head">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-flag"/></svg>
+          <span data-i18n="roadmap.plannedTitle">Geplant</span>
+        </div>
+        <ul>
+          <li data-i18n="roadmap.planned1">Beta mit echten Nutzer:innen</li>
+          <li data-i18n="roadmap.planned2">Feedback-Loop &amp; statistische Optimierung</li>
+          <li data-i18n="roadmap.planned3">Multi-Armed-Bandit-Exploration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="contact-band">
+  <div class="container contact-inner">
+    <h2 data-i18n="contact.title">Lass uns reden</h2>
+    <p data-i18n="contact.body">Ob früher Zugang, Zusammenarbeit oder Investment — eine E-Mail genügt.</p>
+
+    <a href="#" class="btn btn-primary js-mail-link" data-subject-de="Skinly — Kontakt" data-subject-en="Skinly — Contact">
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-mail"/></svg>
+      <span data-i18n="contact.cta">E-Mail schreiben</span>
+    </a>
+
+    <p class="contact-email-plain">
+      <span data-i18n="contact.emailLabel">Direkt per E-Mail:</span> <strong id="mailPlainAddress"></strong>
+      <button type="button" id="mailCopyBtn" class="contact-copy-btn">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span data-i18n="contact.copyBtn">Kopieren</span>
+      </button>
+    </p>
+
+    <div id="mailFallback" class="maintenance-note mail-fallback" role="status" aria-live="polite" hidden>
+      <svg class="icon icon-sm" aria-hidden="true"><use href="#i-shield-alert"/></svg>
+      <span data-i18n="contact.mailFallback">Es konnte kein Standard-E-Mail-Programm gefunden werden. Schreib uns gerne über deinen bevorzugten E-Mail-Anbieter an die oben stehende Adresse.</span>
+    </div>
+
+    <p class="contact-secondary" data-i18n="contact.secondary">Investor:innen und Partner: gerne direkt per Mail.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg class="icon" aria-hidden="true"><use href="#i-target"/></svg>
+        <span>Skinly</span>
+      </div>
+      <div class="footer-links">
+        <a href="impressum.html" data-i18n="footer.impressum">Impressum</a>
+        <a href="datenschutz.html" data-i18n="footer.privacy">Datenschutzerklärung</a>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span data-i18n="footer.disclaimer">Kosmetische Beratung. Keine medizinische Diagnose.</span>
+      · © 2026 Skinly
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   BRAND — single source of truth. Rename here only.
+   ============================================================ */
+var BRAND = {
+  company: "Skinly",
+  product: "Derma Intelligence",
+  email:   "davidajahn1104@gmail.com",
+  domain:  "skinly.example"
+};
+
+/* ============================================================
+   i18n dictionary
+   ============================================================ */
+var I18N = {
+  de: {
+    "a11y.skipLink": "Zum Inhalt springen",
+    "a11y.openMenu": "Menü öffnen",
+    "a11y.closeMenu": "Menü schließen",
+
+    "nav.problem": "Problem",
+    "nav.how": "So funktioniert's",
+    "nav.tech": "Technologie",
+    "nav.privacy": "Datenschutz",
+    "nav.demo": "Demo",
+    "nav.cta": "Kontakt aufnehmen",
+
+    "hero.eyebrow": "Pre-Launch · MVP in Entwicklung",
+    "hero.h1": "Hautpflege-Empfehlungen, die man nachprüfen kann.",
+    "hero.lead": "Ein Gesichtsscan liefert sechs Hautwerte. Ein transparentes Expertensystem — keine Blackbox — baut daraus eine vollständige Routine im Rahmen deines Budgets und begründet jede einzelne Empfehlung.",
+    "hero.ctaDemo": "Demo ansehen",
+    "hero.ctaContact": "Kontakt aufnehmen",
+    "hero.stat1": "Hautwerte",
+    "hero.stat2": "Sicherheitsfilter",
+    "hero.stat3": "Hosting",
+    "hero.stat4": "Werbedeals",
+
+    "problem.eyebrow": "Das Problem",
+    "problem.title": "Hautpflege-Beratung, der man nicht trauen kann",
+    "problem.lead": "Vier Wege, wie Menschen heute zu Produkten kommen — und warum keiner davon wirklich erklärt, warum ein Produkt passt.",
+    "problem.card1.title": "Influencer-Empfehlungen",
+    "problem.card1.body": "Verkaufen gut, sagen aber nichts über die eigene Haut aus — was bei einer Person wirkt, muss bei einer anderen nicht wirken.",
+    "problem.card2.title": "Quiz-Funnels",
+    "problem.card2.body": "Am Ende landen die meisten Nutzer:innen bei denselben vier Produkten — die Fragen wirken individuell, das Ergebnis ist es selten.",
+    "problem.card3.title": "Blackbox-KI",
+    "problem.card3.body": "Liefert eine Empfehlung, aber keine Begründung. Ohne nachvollziehbare Logik lässt sich eine Empfehlung nicht überprüfen — nur glauben oder nicht.",
+    "problem.card4.title": "Fehlende Regulatorik-Prüfung",
+    "problem.card4.body": "Kaum eine App prüft, ob ein Inhaltsstoff in der angegebenen Konzentration überhaupt als Kosmetikum zulässig ist.",
+
+    "how.eyebrow": "So funktioniert's",
+    "how.title": "Vom Scan zur begründeten Routine",
+    "how.lead": "Vier Schritte, jeder einzelne nachvollziehbar.",
+    "how.step1.title": "Scan",
+    "how.step1.body": "Ein Foto wird verschlüsselt an einen privaten EU-Speicher übertragen und automatisch gelöscht — standardmäßig nach 24 Stunden.",
+    "how.step2.title": "Sechs Hautwerte",
+    "how.step2.body": "Unreinheiten, Rötungen, Trockenheit, ölige Haut, Pigmentflecken, Augenringe — jeweils auf einer Skala von 0 bis 100.",
+    "how.step3.title": "Expertensystem",
+    "how.step3.body": "Problem-zu-Wirkstoff-Zuordnung nach Schweregrad, elf Sicherheitsfilter, anschließend eine Bewertung jedes verbliebenen Produkts.",
+    "how.step4.title": "Routine",
+    "how.step4.body": "Sechs Slots — Reinigung, ein bis zwei Wirkstoffprodukte, Feuchtigkeitspflege, Sonnenschutz, optional Augenpflege — per Suche im Rahmen des Budgets ausgewählt, inklusive AM/PM-Reihenfolge.",
+
+    "demo.eyebrow": "Demo",
+    "demo.title": "Probier die Logik selbst aus",
+    "demo.lead": "Bewege die Regler und sieh, wie sich Routine und Empfehlungen verändern.",
+    "demo.panelTitle": "Hautwerte",
+    "demo.budgetLabel": "Budget (einmalig)",
+    "demo.preset1": "Ölige Haut & Unreinheiten",
+    "demo.preset2": "Trocken & sensibel",
+    "demo.preset3": "Gesunde Haut",
+    "demo.disclaimer": "Illustrative Simulation · vereinfachte Regeln · fiktive Beispielprodukte. Keine echte Analyse, keine medizinische Aussage.",
+
+    "metric.acne": "Unreinheiten (Akne)",
+    "metric.redness": "Rötungen",
+    "metric.dryness": "Trockenheit",
+    "metric.oiliness": "Ölige Haut",
+    "metric.pigmentation": "Pigmentflecken",
+    "metric.eye_bags": "Augenringe",
+
+    "tech.eyebrow": "Technologie",
+    "tech.title": "Warum das anders ist",
+    "tech.lead": "Sechs Eigenschaften, die im Code erzwungen werden — nicht nur im Marketing behauptet.",
+    "tech.card1.title": "Eine transparente Einheit",
+    "tech.card1.body": "Ein Score ist die erwartete Verbesserung in Punkten auf derselben 0–100-Skala, die der Scan liefert — vergleichbar über Nutzer:innen hinweg, mit Aufschlüsselung pro Hautproblem.",
+    "tech.card2.title": "Vollständige Suche, keine Abkürzung",
+    "tech.card2.body": "Die Routine wird per exakter Suche gefunden, ohne den Kandidatenpool zu kürzen — verifiziert gegen ein unabhängiges Referenzmodell über 118 Testprofile, 0 Abweichungen.",
+    "tech.card3.title": "Kosmetik-Allowlist",
+    "tech.card3.body": "Verschreibungspflichtige Wirkstoffe sind strukturell ausgeschlossen — auch wenn man sie dem System direkt vorlegt. Unbekannte Daten schließen aus, statt als sicher zu gelten.",
+    "tech.card4.title": "Fail-closed bei Allergien",
+    "tech.card4.body": "Fehlt die INCI-Deklaration eines Produkts und wird eine Sensitivität gemeldet, wird automatisch ausgeschlossen. Unklare Begriffe werden offengelegt, nicht stillschweigend ignoriert.",
+    "tech.card5.title": "Keine Heilversprechen",
+    "tech.card5.body": "„Zielt auf das Erscheinungsbild von X ab“ — niemals „behandelt“, „heilt“ oder „bekämpft“. Für den gesamten Katalog durch die Testsuite erzwungen, nicht nur redaktionell empfohlen.",
+    "tech.card6.title": "Kalibrierung eingefroren",
+    "tech.card6.body": "36 Stellschrauben sind in einer Registry erfasst; eine neue, nicht erfasste Konstante lässt den Build fehlschlagen. Werte ändern sich nur mit gemessenen Daten, nie nach Gefühl.",
+    "tech.stat1": "automatisierte Tests",
+    "tech.stat2": "pro Empfehlung",
+    "tech.stat3": "volle Routinensuche",
+    "tech.stat4": "Produkte im Testkatalog",
+    "tech.stat5": "registrierte Stellschrauben",
+
+    "privacy.eyebrow": "Datenschutz & Compliance",
+    "privacy.title": "Dein Gesicht ist biometrische Daten. Wir gehen entsprechend sorgfältig damit um.",
+    "privacy.lead": "Vier Grundsätze, die die Handhabung deiner Daten bestimmen.",
+    "privacy.item1.title": "Biometrische Daten nach Art. 9 DSGVO",
+    "privacy.item1.body": "Gesichtsfotos gelten als besondere Kategorie personenbezogener Daten — deshalb ist die Verarbeitung an eine ausdrückliche, versionierte und jederzeit widerrufbare Einwilligung gebunden.",
+    "privacy.item2.title": "Kurze Speicherung, EU-Hosting",
+    "privacy.item2.body": "Fotos werden ausschließlich zur Berechnung der Hautwerte gespeichert, auf einem privaten EU-Server, und automatisch gelöscht — standardmäßig nach 24 Stunden, oft früher.",
+    "privacy.item3.title": "Gesundheitsdaten bleiben anfrage-gebunden",
+    "privacy.item3.body": "Gemeldete Sensitivitäten und Allergien sind Gesundheitsdaten nach Art. 9 DSGVO — sie werden nur für die jeweilige Anfrage verwendet, nie geloggt oder gespeichert ohne separate Einwilligung.",
+    "privacy.item4.title": "Kosmetische Beratung, keine Diagnose",
+    "privacy.item4.body": "Die App diagnostiziert, behandelt oder heilt keine medizinische Erkrankung und ersetzt keinen Arzt- oder Dermatologiebesuch.",
+
+    "roadmap.eyebrow": "Status",
+    "roadmap.title": "Wo wir stehen",
+    "roadmap.lead": "Ehrlich gesagt: vorproduktiv. Das hier ist der aktuelle Stand.",
+    "roadmap.doneTitle": "Fertig",
+    "roadmap.done1": "Expertensystem & Scoring-Logik",
+    "roadmap.done2": "API v1 spezifiziert & eingefroren",
+    "roadmap.done3": "6-Slot-Routinenbau unter Budget",
+    "roadmap.done4": "Fortschrittsvergleich zwischen Scans",
+    "roadmap.done5": "Mobile-App-Grundgerüst (Expo)",
+    "roadmap.progressTitle": "In Arbeit",
+    "roadmap.progress1": "Echter Produktkatalog statt 50 Testprodukten",
+    "roadmap.progress2": "Anbindung eines echten Skin-Analysis-Providers",
+    "roadmap.plannedTitle": "Geplant",
+    "roadmap.planned1": "Beta mit echten Nutzer:innen",
+    "roadmap.planned2": "Feedback-Loop & statistische Optimierung",
+    "roadmap.planned3": "Multi-Armed-Bandit-Exploration",
+
+    "contact.title": "Lass uns reden",
+    "contact.body": "Ob früher Zugang, Zusammenarbeit oder Investment — eine E-Mail genügt.",
+    "contact.cta": "E-Mail schreiben",
+    "contact.secondary": "Investor:innen und Partner: gerne direkt per Mail.",
+    "contact.mailFallback": "Es konnte kein Standard-E-Mail-Programm gefunden werden. Schreib uns gerne über deinen bevorzugten E-Mail-Anbieter an die oben stehende Adresse.",
+    "contact.emailLabel": "Direkt per E-Mail:",
+    "contact.copyBtn": "Kopieren",
+    "contact.copied": "Kopiert!",
+
+    "footer.impressum": "Impressum",
+    "footer.privacy": "Datenschutzerklärung",
+    "footer.disclaimer": "Kosmetische Beratung. Keine medizinische Diagnose.",
+
+    "demo.resultRoutineTitle": "Deine Routine",
+    "demo.resultMatchesTitle": "Top-Empfehlungen",
+    "demo.maintenanceNote": "Keine relevante Auffälligkeit erkannt — das ist die richtige Antwort, kein Fehler. Eine einfache Pflegeroutine reicht aus.",
+    "demo.total": "Gesamt (einmalig)",
+    "demo.budgetLimitedNote": "Hinweis: Das Budget reichte nicht für alle passenden Wirkstoffprodukte.",
+    "demo.infeasibleNote": "Bei diesem Budget ist keine vollständige Routine möglich — versuche ein höheres Budget.",
+    "demo.introWeek1": "Woche 1: mit allen Produkten außer Retinol beginnen.",
+    "demo.introWeek2": "Woche 2: Retinol-Produkt ergänzen.",
+    "demo.separationNote": "auftragen zu unterschiedlichen Tageszeiten (z. B. eines morgens, eines abends)",
+    "demo.timeHorizon": "Sichtbare Veränderungen sind realistisch nach etwa 6 Wochen konsequenter Anwendung.",
+    "demo.and": "und",
+    "demo.reasoningPrefix": "zielt auf das Erscheinungsbild von",
+    "demo.reasoningSuffix": "ab",
+    "band.strong": "starke Übereinstimmung",
+    "band.good": "gute Übereinstimmung",
+    "band.some": "etwas Nutzen",
+    "slot.cleanser": "Reinigung",
+    "slot.treatment": "Wirkstoff",
+    "slot.moisturizer": "Pflege",
+    "slot.sunscreen": "Sonnenschutz",
+    "slot.eye_care": "Augen"
+  },
+  en: {
+    "a11y.skipLink": "Skip to content",
+    "a11y.openMenu": "Open menu",
+    "a11y.closeMenu": "Close menu",
+
+    "nav.problem": "Problem",
+    "nav.how": "How it works",
+    "nav.tech": "Technology",
+    "nav.privacy": "Privacy",
+    "nav.demo": "Demo",
+    "nav.cta": "Get in touch",
+
+    "hero.eyebrow": "Pre-launch · MVP in development",
+    "hero.h1": "Skincare recommendations you can actually check.",
+    "hero.lead": "One face scan returns six skin metrics. A transparent expert system — not a black box — turns them into a complete routine within your budget, and explains every single recommendation.",
+    "hero.ctaDemo": "See the demo",
+    "hero.ctaContact": "Get in touch",
+    "hero.stat1": "skin metrics",
+    "hero.stat2": "safety filters",
+    "hero.stat3": "hosting",
+    "hero.stat4": "ad deals",
+
+    "problem.eyebrow": "The problem",
+    "problem.title": "Skincare advice you can't verify",
+    "problem.lead": "Four ways people find products today — and why none of them actually explain why a product fits.",
+    "problem.card1.title": "Influencer picks",
+    "problem.card1.body": "They sell well but say nothing about your skin — what works for one person doesn't have to work for another.",
+    "problem.card2.title": "Quiz funnels",
+    "problem.card2.body": "Most users end up with the same four products — the questions feel personal, the outcome rarely is.",
+    "problem.card3.title": "Black-box AI",
+    "problem.card3.body": "Gives you a recommendation but no reasoning. Without traceable logic, a recommendation can't be checked — only believed or not.",
+    "problem.card4.title": "No regulatory check",
+    "problem.card4.body": "Hardly any app verifies whether an ingredient is even legal as a cosmetic at the stated concentration.",
+
+    "how.eyebrow": "How it works",
+    "how.title": "From scan to a routine you can trace",
+    "how.lead": "Four steps, each one traceable.",
+    "how.step1.title": "Scan",
+    "how.step1.body": "A photo is transferred encrypted to private EU storage and deleted automatically — by default within 24 hours.",
+    "how.step2.title": "Six skin metrics",
+    "how.step2.body": "Acne, redness, dryness, oiliness, pigmentation, under-eye appearance — each on a 0–100 scale.",
+    "how.step3.title": "Expert system",
+    "how.step3.body": "Problem-to-ingredient mapping weighted by severity, eleven safety filters, then a score for every surviving product.",
+    "how.step4.title": "Routine",
+    "how.step4.body": "Six slots — cleanser, one to two treatments, moisturizer, sunscreen, optional eye care — chosen by search within your budget, with AM/PM order.",
+
+    "demo.eyebrow": "Demo",
+    "demo.title": "Try the logic yourself",
+    "demo.lead": "Move the sliders and watch the routine and recommendations change.",
+    "demo.panelTitle": "Skin metrics",
+    "demo.budgetLabel": "Budget (one-time)",
+    "demo.preset1": "Oily & blemish-prone",
+    "demo.preset2": "Dry & sensitive",
+    "demo.preset3": "Healthy skin",
+    "demo.disclaimer": "Illustrative simulation · simplified rules · fictional example products. Not a real analysis, not a medical statement.",
+
+    "metric.acne": "Acne / blemishes",
+    "metric.redness": "Redness",
+    "metric.dryness": "Dryness",
+    "metric.oiliness": "Oiliness",
+    "metric.pigmentation": "Pigmentation",
+    "metric.eye_bags": "Under-eye appearance",
+
+    "tech.eyebrow": "Technology",
+    "tech.title": "Why this is different",
+    "tech.lead": "Six properties enforced in code — not just claimed in marketing.",
+    "tech.card1.title": "One transparent unit",
+    "tech.card1.body": "A score is the expected improvement in points on the same 0–100 scale the scan reports — comparable across users, with a breakdown per skin concern.",
+    "tech.card2.title": "Exhaustive search, no shortcuts",
+    "tech.card2.body": "The routine is found by exact search with zero candidate-pool truncation — verified against an independent reference model across 118 test profiles, 0 mismatches.",
+    "tech.card3.title": "Cosmetics allowlist",
+    "tech.card3.body": "Prescription-only actives are structurally excluded — even if handed to the system directly. Unknown data means exclusion, never assumed-safe.",
+    "tech.card4.title": "Fail-closed on allergies",
+    "tech.card4.body": "If a product's INCI list is missing and a sensitivity is reported, it's excluded automatically. Unresolvable terms are surfaced, never silently dropped.",
+    "tech.card5.title": "No healing claims",
+    "tech.card5.body": "\"Targets the appearance of X\" — never \"treats\", \"heals\", or \"cures\". Enforced across the whole catalogue by the test suite, not just editorial discipline.",
+    "tech.card6.title": "Calibration frozen",
+    "tech.card6.body": "36 tunable constants are tracked in one registry; a new untracked constant fails the build. Values only change with measured data, never by feel.",
+    "tech.stat1": "automated tests",
+    "tech.stat2": "per recommendation",
+    "tech.stat3": "full routine search",
+    "tech.stat4": "products in test catalogue",
+    "tech.stat5": "registered tunables",
+
+    "privacy.eyebrow": "Privacy & compliance",
+    "privacy.title": "Your face is biometric data. We handle it accordingly.",
+    "privacy.lead": "Four principles that govern how your data is handled.",
+    "privacy.item1.title": "Biometric data under GDPR Art. 9",
+    "privacy.item1.body": "Face photos count as a special category of personal data — so processing requires explicit, versioned, freely revocable consent.",
+    "privacy.item2.title": "Short retention, EU hosting",
+    "privacy.item2.body": "Photos are stored only to compute the skin metrics, on a private EU server, and deleted automatically — by default within 24 hours, often sooner.",
+    "privacy.item3.title": "Health data stays request-scoped",
+    "privacy.item3.body": "Reported sensitivities and allergies are health data under GDPR Art. 9 — used only for that request, never logged or stored without separate consent.",
+    "privacy.item4.title": "Cosmetic advice, not diagnosis",
+    "privacy.item4.body": "The app does not diagnose, treat, or cure any medical condition, and is not a substitute for seeing a doctor or dermatologist.",
+
+    "roadmap.eyebrow": "Status",
+    "roadmap.title": "Where things stand",
+    "roadmap.lead": "Honestly: pre-production. This is the current state.",
+    "roadmap.doneTitle": "Done",
+    "roadmap.done1": "Expert system & scoring logic",
+    "roadmap.done2": "API v1 specified & frozen",
+    "roadmap.done3": "6-slot routine builder under budget",
+    "roadmap.done4": "Progress comparison across scans",
+    "roadmap.done5": "Mobile app skeleton (Expo)",
+    "roadmap.progressTitle": "In progress",
+    "roadmap.progress1": "Real product catalogue to replace the 50 test products",
+    "roadmap.progress2": "Integrating a real skin-analysis provider",
+    "roadmap.plannedTitle": "Planned",
+    "roadmap.planned1": "Beta with real users",
+    "roadmap.planned2": "Feedback loop & statistical optimization",
+    "roadmap.planned3": "Multi-armed bandit exploration",
+
+    "contact.title": "Let's talk",
+    "contact.body": "Early access, collaboration, or investment — one email is enough.",
+    "contact.cta": "Send an email",
+    "contact.secondary": "Investors & partners: happy to talk directly by email.",
+    "contact.mailFallback": "We couldn't find a default email app on this device. Feel free to reach out from your preferred email provider using the address above.",
+    "contact.emailLabel": "Directly by email:",
+    "contact.copyBtn": "Copy",
+    "contact.copied": "Copied!",
+
+    "footer.impressum": "Legal notice",
+    "footer.privacy": "Privacy policy",
+    "footer.disclaimer": "Cosmetic advice only. Not a medical diagnosis.",
+
+    "demo.resultRoutineTitle": "Your routine",
+    "demo.resultMatchesTitle": "Top matches",
+    "demo.maintenanceNote": "No relevant concern detected — that's the correct answer, not a failure. A simple maintenance routine is enough.",
+    "demo.total": "Total (one-time)",
+    "demo.budgetLimitedNote": "Note: the budget didn't stretch to all matching treatments.",
+    "demo.infeasibleNote": "No complete routine fits this budget — try increasing it.",
+    "demo.introWeek1": "Week 1: start with everything except the retinol product.",
+    "demo.introWeek2": "Week 2: add the retinol product.",
+    "demo.separationNote": "apply at different times of day (for example one in the morning, one in the evening)",
+    "demo.timeHorizon": "Visible changes are realistically expected after about 6 weeks of consistent use.",
+    "demo.and": "and",
+    "demo.reasoningPrefix": "targets the appearance of",
+    "demo.reasoningSuffix": "",
+    "band.strong": "strong match",
+    "band.good": "good match",
+    "band.some": "some benefit",
+    "slot.cleanser": "Cleanser",
+    "slot.treatment": "Treatment",
+    "slot.moisturizer": "Moisturizer",
+    "slot.sunscreen": "Sunscreen",
+    "slot.eye_care": "Eye care"
+  }
+};
+
+/* ============================================================
+   Mock product catalogue — illustrative only.
+   targets: {metric: relevance 0..1}
+   ============================================================ */
+var PRODUCTS = [
+  { id:"cleanser_bha", name:"Clarifying BHA Wash", brand:"DermaPura", price:14.90, type:"cleanser",
+    actives:{de:"Salicylsäure, Zink PCA", en:"Salicylic acid, zinc PCA"}, targets:{acne:0.7, oiliness:0.6} },
+  { id:"cleanser_ceramide", name:"Ceramide Comfort Cleanser", brand:"NordCare", price:12.90, type:"cleanser",
+    actives:{de:"Ceramide", en:"Ceramides"}, targets:{dryness:0.5, redness:0.2}, gentle:true },
+  { id:"serum_retinol", name:"Retinol & Hyaluronic Renewal Serum", brand:"Skinovea", price:36.90, type:"treatment",
+    actives:{de:"Retinol 0,3%, Hyaluronsäure", en:"Retinol 0.3%, hyaluronic acid"}, targets:{pigmentation:0.6, dryness:0.25}, retinol:true },
+  { id:"serum_acne", name:"Clarifying Acne Serum", brand:"DermaPura", price:22.90, type:"treatment",
+    actives:{de:"Salicylsäure, Zink PCA", en:"Salicylic acid, zinc PCA"}, targets:{acne:0.7, oiliness:0.4} },
+  { id:"serum_azelaic", name:"Azelaic 10% Redness Serum", brand:"CalmeDerm", price:26.90, type:"treatment",
+    actives:{de:"Azelainsäure 10%", en:"Azelaic acid 10%"}, targets:{redness:0.7, acne:0.3} },
+  { id:"toner_vitc", name:"Brightening Vitamin C Toner", brand:"Lumira", price:16.90, type:"treatment",
+    actives:{de:"Vitamin C", en:"Vitamin C"}, targets:{pigmentation:0.5} },
+  { id:"moisturizer_gel", name:"Oil-Free Gel Moisturizer", brand:"PureBiome", price:18.90, type:"moisturizer",
+    actives:{de:"Niacinamid", en:"Niacinamide"}, targets:{oiliness:0.5, acne:0.2} },
+  { id:"moisturizer_rich", name:"Rich Barrier Repair Cream", brand:"VelvSkin", price:21.90, type:"moisturizer",
+    actives:{de:"Ceramide, Sheabutter", en:"Ceramides, shea butter"}, targets:{dryness:0.6}, gentle:true },
+  { id:"sun_tinted", name:"Tinted Mineral SPF30 Cream", brand:"AuraDerm", price:24.90, type:"sunscreen",
+    actives:{de:"SPF 30, Vitamin C", en:"SPF 30, vitamin C"}, targets:{pigmentation:0.3} },
+  { id:"sun_sensitive", name:"Sensitive Skin SPF50 Cream", brand:"CalmeDerm", price:19.90, type:"sunscreen",
+    actives:{de:"SPF 50", en:"SPF 50"}, targets:{redness:0.2}, gentle:true },
+  { id:"eye_caffeine", name:"Depuffing Caffeine Eye Gel", brand:"AuraDerm", price:19.90, type:"eye_care",
+    actives:{de:"Koffein", en:"Caffeine"}, targets:{eye_bags:0.6} }
+];
+
+var METRICS = ["acne","redness","dryness","oiliness","pigmentation","eye_bags"];
+var NO_CONCERN_THRESHOLD = 15;
+var EYE_CARE_THRESHOLD = 40;
+var SOME_BENEFIT_MIN = 7;
+
+var PRESETS = {
+  oily:    { acne:70, redness:20, dryness:10, oiliness:65, pigmentation:15, eye_bags:10, budget:80 },
+  dry:     { acne:10, redness:45, dryness:70, oiliness:5,  pigmentation:10, eye_bags:20, budget:80 },
+  healthy: { acne:5,  redness:5,  dryness:5,  oiliness:5,  pigmentation:5,  eye_bags:5,  budget:80 }
+};
+
+/* ============================================================
+   i18n engine
+   ============================================================ */
+var state = { lang: "de" };
+
+function t(key){
+  var dict = I18N[state.lang] || I18N.de;
+  return (key in dict) ? dict[key] : (I18N.de[key] || key);
+}
+
+function detectInitialLang(){
+  try {
+    var stored = localStorage.getItem("skinly_lang");
+    if (stored === "de" || stored === "en") return stored;
+  } catch(e){}
+  var nav = (navigator.language || "de").toLowerCase();
+  return nav.indexOf("de") === 0 ? "de" : "en";
+}
+
+function applyLang(lang){
+  state.lang = lang;
+  document.documentElement.lang = lang;
+  try { localStorage.setItem("skinly_lang", lang); } catch(e){}
+
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var key = el.getAttribute("data-i18n");
+    el.textContent = t(key);
+  });
+  document.querySelectorAll("[data-i18n-attr]").forEach(function(el){
+    var spec = el.getAttribute("data-i18n-attr");
+    spec.split(",").forEach(function(pair){
+      var parts = pair.split(":");
+      if (parts.length === 2) el.setAttribute(parts[0].trim(), t(parts[1].trim()));
+    });
+  });
+
+  document.querySelectorAll("[data-lang-btn]").forEach(function(btn){
+    btn.setAttribute("aria-pressed", btn.getAttribute("data-lang-btn") === lang ? "true" : "false");
+  });
+
+  document.querySelectorAll(".js-mail-link").forEach(function(a){
+    var subject = a.getAttribute(lang === "de" ? "data-subject-de" : "data-subject-en") || "";
+    a.href = "mailto:" + BRAND.email + (subject ? ("?subject=" + encodeURIComponent(subject)) : "");
+  });
+  var mailPlainAddressEl = document.getElementById("mailPlainAddress");
+  if (mailPlainAddressEl) mailPlainAddressEl.textContent = BRAND.email;
+
+  renderDemo();
+}
+
+document.querySelectorAll("[data-lang-btn]").forEach(function(btn){
+  btn.addEventListener("click", function(){ applyLang(btn.getAttribute("data-lang-btn")); });
+});
+
+/* ============================================================
+   Mail fallback — mailto: has no success/failure event, so we
+   infer failure by watching for the browser losing focus (a mail
+   app or OS chooser opening) shortly after the click. If nothing
+   happens within MAIL_FALLBACK_DELAY_MS, assume no handler is
+   registered and show an in-page message instead of leaving the
+   user with an unexplained OS error dialog.
+   ============================================================ */
+var MAIL_FALLBACK_DELAY_MS = 1300;
+var mailFallbackEl = document.getElementById("mailFallback");
+var mailFallbackTimer = null;
+var mailFallbackSettled = true;
+
+function onMailFallbackSettle(){
+  if (mailFallbackSettled) return;
+  mailFallbackSettled = true;
+  clearTimeout(mailFallbackTimer);
+  window.removeEventListener("blur", onMailFallbackSettle);
+  document.removeEventListener("visibilitychange", onMailVisibilityChange);
+}
+function onMailVisibilityChange(){
+  if (document.hidden) onMailFallbackSettle();
+}
+
+document.querySelectorAll(".js-mail-link").forEach(function(a){
+  a.addEventListener("click", function(){
+    if (!mailFallbackEl) return;
+    onMailFallbackSettle();
+    mailFallbackSettled = false;
+    window.addEventListener("blur", onMailFallbackSettle);
+    document.addEventListener("visibilitychange", onMailVisibilityChange);
+    mailFallbackTimer = setTimeout(function(){
+      if (!mailFallbackSettled) {
+        onMailFallbackSettle();
+        mailFallbackEl.hidden = false;
+      }
+    }, MAIL_FALLBACK_DELAY_MS);
+  });
+});
+
+/* ============================================================
+   Copy email address — a real fallback that never touches the
+   mailto: protocol, so unlike the button above it cannot trigger
+   an OS "no app associated" dialog.
+   ============================================================ */
+var mailCopyBtn = document.getElementById("mailCopyBtn");
+if (mailCopyBtn) {
+  var mailCopyLabel = mailCopyBtn.querySelector("[data-i18n]");
+  var mailCopyResetTimer = null;
+  mailCopyBtn.addEventListener("click", function(){
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(BRAND.email).then(function(){
+      if (!mailCopyLabel) return;
+      clearTimeout(mailCopyResetTimer);
+      mailCopyLabel.textContent = t("contact.copied");
+      mailCopyResetTimer = setTimeout(function(){
+        mailCopyLabel.textContent = t("contact.copyBtn");
+      }, 1800);
+    }).catch(function(){ /* permission denied — address is already visible, selectable text */ });
+  });
+}
+
+/* ============================================================
+   Mobile nav sheet
+   ============================================================ */
+var navToggleBtn = document.getElementById("navToggleBtn");
+var navCloseBtn = document.getElementById("navCloseBtn");
+var mobileSheet = document.getElementById("mobileSheet");
+
+function openSheet(){
+  mobileSheet.classList.add("is-open");
+  navToggleBtn.setAttribute("aria-expanded", "true");
+  navCloseBtn.focus();
+  document.body.style.overflow = "hidden";
+}
+function closeSheet(){
+  mobileSheet.classList.remove("is-open");
+  navToggleBtn.setAttribute("aria-expanded", "false");
+  navToggleBtn.focus();
+  document.body.style.overflow = "";
+}
+navToggleBtn.addEventListener("click", openSheet);
+navCloseBtn.addEventListener("click", closeSheet);
+mobileSheet.querySelectorAll(".mobile-link").forEach(function(a){
+  a.addEventListener("click", closeSheet);
+});
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && mobileSheet.classList.contains("is-open")) closeSheet();
+});
+
+/* ============================================================
+   Scroll reveal (respects prefers-reduced-motion)
+   ============================================================ */
+var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!prefersReducedMotion && "IntersectionObserver" in window){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add("is-visible");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+} else {
+  document.querySelectorAll(".reveal").forEach(function(el){ el.classList.add("is-visible"); });
+}
+
+/* ============================================================
+   Demo engine
+   ============================================================ */
+var sliderIds = METRICS.map(function(m){ return "s-" + m; });
+
+function readSeverities(){
+  var out = {};
+  METRICS.forEach(function(m){
+    out[m] = parseInt(document.getElementById("s-" + m).value, 10) || 0;
+  });
+  return out;
+}
+
+function scoreProduct(product, severities){
+  var points = 0;
+  var contributions = {};
+  for (var metric in product.targets){
+    var rel = product.targets[metric];
+    var sev = (severities[metric] || 0) / 100;
+    var c = rel * sev * 60;
+    points += c;
+    if (c > 2) contributions[metric] = c;
+  }
+  return { points: points, contributions: contributions };
+}
+
+function matchBand(points){
+  if (points >= 28) return "strong";
+  if (points >= 16) return "good";
+  return "some";
+}
+
+function topContributingMetrics(contributions, max){
+  return Object.keys(contributions)
+    .sort(function(a,b){ return contributions[b] - contributions[a]; })
+    .slice(0, max || 2);
+}
+
+function reasoningSentence(product, contributions){
+  var metrics = topContributingMetrics(contributions, 2);
+  var labels = metrics.map(function(m){ return t("metric." + m).toLowerCase(); });
+  var joined = labels.length > 1
+    ? labels.slice(0, -1).join(", ") + " " + t("demo.and") + " " + labels[labels.length - 1]
+    : (labels[0] || "");
+  var prefix = t("demo.reasoningPrefix");
+  var suffix = t("demo.reasoningSuffix");
+  return product.name + " " + prefix + " " + joined + (suffix ? (" " + suffix) : "");
+}
+
+function fmtPrice(v){
+  return "€" + v.toFixed(2).replace(".", state.lang === "de" ? "," : ".");
+}
+
+function pickBestByType(type, severities, excludeIds){
+  var candidates = PRODUCTS.filter(function(p){ return p.type === type && excludeIds.indexOf(p.id) === -1; });
+  var scored = candidates.map(function(p){ return { product:p, s: scoreProduct(p, severities) }; });
+  scored.sort(function(a,b){ return b.s.points - a.s.points; });
+  return scored[0] || null;
+}
+
+function cheapestByType(type){
+  var candidates = PRODUCTS.filter(function(p){ return p.type === type; });
+  return candidates.reduce(function(best, p){ return (!best || p.price < best.price) ? p : best; }, null);
+}
+
+/*
+ * Budget is a hard constraint, mirroring the real engine (routine.py), and treatments are
+ * prioritized over baseline product quality, mirroring "maximize expected benefit under
+ * budget" — a treatment carries far more benefit than a marginally-better cleanser. So the
+ * allocation runs in priority order: (1) cheapest possible baseline as a floor, (2) spend
+ * what's left on treatments/eye care by score, (3) spend any leftover upgrading baseline
+ * slots to their best-scoring alternative. A slot is only ever added if it fits what's left,
+ * so the total can never exceed `budget` except the genuine `infeasible` case where even the
+ * cheapest baseline doesn't fit — surfaced honestly rather than silently overshot.
+ */
+function buildRoutine(severities, budget){
+  var maxSeverity = Math.max.apply(null, METRICS.map(function(m){ return severities[m]; }));
+  var isMaintenance = maxSeverity < NO_CONCERN_THRESHOLD;
+  var baselineTypes = ["cleanser", "moisturizer", "sunscreen"];
+
+  var baseline = {};
+  baselineTypes.forEach(function(type){ baseline[type] = cheapestByType(type); });
+  var baselineFloor = baselineTypes.reduce(function(sum, type){ return sum + baseline[type].price; }, 0);
+  var infeasible = baselineFloor > budget;
+
+  var slots = [
+    { role:"cleanser", product: baseline.cleanser },
+    { role:"moisturizer", product: baseline.moisturizer },
+    { role:"sunscreen", product: baseline.sunscreen }
+  ];
+  var remaining = budget - baselineFloor;
+  var budgetLimited = false;
+
+  if (!isMaintenance && !infeasible){
+    var used = [baseline.cleanser.id, baseline.moisturizer.id, baseline.sunscreen.id];
+    var treatmentCandidates = PRODUCTS.filter(function(p){ return p.type === "treatment"; })
+      .map(function(p){ return { product:p, s: scoreProduct(p, severities) }; })
+      .filter(function(x){ return x.s.points >= SOME_BENEFIT_MIN; })
+      .sort(function(a,b){ return b.s.points - a.s.points; });
+
+    var addedTreatments = 0;
+    treatmentCandidates.forEach(function(x){
+      if (addedTreatments >= 2) return;
+      if (x.product.price > remaining){ budgetLimited = true; return; }
+      slots.splice(1 + addedTreatments, 0, {
+        role: addedTreatments === 0 ? "treatment_primary" : "treatment_secondary",
+        product: x.product, points: x.s.points
+      });
+      remaining -= x.product.price;
+      used.push(x.product.id);
+      addedTreatments++;
+    });
+
+    if (severities.eye_bags >= EYE_CARE_THRESHOLD){
+      var eye = pickBestByType("eye_care", severities, used);
+      if (eye){
+        if (eye.product.price <= remaining){
+          slots.push({ role:"eye_care", product: eye.product });
+          remaining -= eye.product.price;
+        } else {
+          budgetLimited = true;
+        }
+      }
+    }
+  }
+
+  if (!isMaintenance){
+    baselineTypes.forEach(function(type){
+      var slot = slots.filter(function(s){ return s.role === type; })[0];
+      var best = pickBestByType(type, severities, []).product;
+      var upgradeCost = best.price - slot.product.price;
+      if (best.id !== slot.product.id && upgradeCost <= remaining){
+        slot.product = best;
+        remaining -= upgradeCost;
+      }
+    });
+  } else {
+    baselineTypes.forEach(function(type){
+      var slot = slots.filter(function(s){ return s.role === type; })[0];
+      var gentle = PRODUCTS.filter(function(p){ return p.type === type && p.gentle; })[0];
+      if (gentle && gentle.id !== slot.product.id){
+        var upgradeCost = gentle.price - slot.product.price;
+        if (upgradeCost <= remaining){ slot.product = gentle; remaining -= upgradeCost; }
+      }
+    });
+  }
+
+  var total = slots.reduce(function(sum, s){ return sum + s.product.price; }, 0);
+
+  assignSchedule(slots);
+
+  return { slots:slots, total:total, budget:budget, isMaintenance:isMaintenance, infeasible:infeasible, budgetLimited:budgetLimited };
+}
+
+function assignSchedule(slots){
+  var treatments = slots.filter(function(s){ return s.role === "treatment_primary" || s.role === "treatment_secondary"; });
+  slots.forEach(function(s){
+    if (s.role === "cleanser" || s.role === "moisturizer" || s.role === "eye_care"){
+      s.am = true; s.pm = true;
+    } else if (s.role === "sunscreen"){
+      s.am = true; s.pm = false;
+    }
+  });
+  if (treatments.length === 2){
+    var retinolSlot = treatments.filter(function(s){ return s.product.retinol; })[0];
+    var otherSlot = treatments.filter(function(s){ return !s.product.retinol; })[0];
+    if (retinolSlot && otherSlot){
+      retinolSlot.am = false; retinolSlot.pm = true;
+      otherSlot.am = true; otherSlot.pm = false;
+    } else {
+      treatments[0].am = true; treatments[0].pm = false;
+      treatments[1].am = false; treatments[1].pm = true;
+    }
+  } else if (treatments.length === 1){
+    if (treatments[0].product.retinol){ treatments[0].am = false; treatments[0].pm = true; }
+    else { treatments[0].am = true; treatments[0].pm = true; }
+  }
+}
+
+function slotLabel(role){
+  if (role === "treatment_primary" || role === "treatment_secondary") return t("slot.treatment");
+  return t("slot." + role);
+}
+
+function daytimeLabel(s){
+  if (s.am && s.pm) return "AM / PM";
+  if (s.am) return "AM";
+  if (s.pm) return "PM";
+  return "";
+}
+
+function renderRoutine(routine){
+  var html = "";
+  html += '<div class="result-card">';
+  html += '<h3><svg class="icon icon-sm" aria-hidden="true"><use href="#i-list-checks"/></svg>' + t("demo.resultRoutineTitle") + '</h3>';
+
+  if (routine.isMaintenance){
+    html += '<div class="maintenance-note"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-circle-check"/></svg><span>' + t("demo.maintenanceNote") + '</span></div>';
+  }
+  if (routine.infeasible){
+    html += '<div class="maintenance-note" style="background:var(--danger-soft); color:var(--danger)"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-shield-alert"/></svg><span>' + t("demo.infeasibleNote") + '</span></div>';
+  }
+
+  routine.slots.forEach(function(s){
+    var p = s.product;
+    html += '<div class="routine-slot">';
+    html += '<div class="slot-badge">' + slotLabel(s.role) + '</div>';
+    html += '<div class="slot-body">';
+    html += '<div class="pname">' + p.name + '</div>';
+    html += '<div class="pmeta">' + p.brand + ' · ' + (p.actives[state.lang] || p.actives.en) + '</div>';
+    if (s.am || s.pm) html += '<div class="daytime-badges"><span class="daytime-badge">' + daytimeLabel(s) + '</span></div>';
+    html += '</div>';
+    html += '<div class="slot-price">' + fmtPrice(p.price) + '</div>';
+    html += '</div>';
+  });
+
+  var totalStyle = routine.infeasible ? ' style="color:var(--danger)"' : '';
+  html += '<div class="routine-total"' + totalStyle + '><span>' + t("demo.total") + '</span><span>' + fmtPrice(routine.total) + ' / ' + fmtPrice(routine.budget) + '</span></div>';
+
+  var hasRetinol = routine.slots.some(function(s){ return s.product.retinol; });
+  var treatmentSlots = routine.slots.filter(function(s){ return s.role === "treatment_primary" || s.role === "treatment_secondary"; });
+  var notes = [];
+  if (routine.budgetLimited) notes.push(t("demo.budgetLimitedNote"));
+  if (hasRetinol) notes.push(t("demo.introWeek1") + " " + t("demo.introWeek2"));
+  if (treatmentSlots.length === 2){
+    var names = treatmentSlots.map(function(s){ return s.product.name; }).join(" " + t("demo.and") + " ");
+    notes.push(names + " " + t("demo.separationNote") + ".");
+  }
+  if (notes.length){
+    html += '<div class="routine-note">' + notes.join(" ") + '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderMatches(severities){
+  var scored = PRODUCTS.map(function(p){ return { product:p, s: scoreProduct(p, severities) }; })
+    .filter(function(x){ return x.s.points >= SOME_BENEFIT_MIN; })
+    .sort(function(a,b){ return b.s.points - a.s.points; })
+    .slice(0, 3);
+
+  var html = '<div class="result-card">';
+  html += '<h3><svg class="icon icon-sm" aria-hidden="true"><use href="#i-sparkles"/></svg>' + t("demo.resultMatchesTitle") + '</h3>';
+
+  if (scored.length === 0){
+    html += '<p style="color:var(--muted); font-size:.9rem">—</p>';
+  } else {
+    scored.forEach(function(x){
+      var band = matchBand(x.s.points);
+      html += '<div class="match-item">';
+      html += '<div class="match-head"><span class="match-name">' + x.product.name + '</span><span class="match-band band-' + band + '">' + t("band." + band) + '</span></div>';
+      html += '<div class="match-reason">' + reasoningSentence(x.product, x.s.contributions) + '</div>';
+      html += '<div class="match-horizon">' + t("demo.timeHorizon") + '</div>';
+      html += '<div class="match-price">' + x.product.brand + ' · ' + fmtPrice(x.product.price) + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+  return html;
+}
+
+var demoDebounceTimer = null;
+function renderDemo(){
+  var severities = readSeverities();
+  var budget = parseFloat(document.getElementById("s-budget").value) || 130;
+  var routine = buildRoutine(severities, budget);
+  var out = document.getElementById("demoOutput");
+  out.innerHTML = renderRoutine(routine) + renderMatches(severities);
+}
+function scheduleRender(){
+  clearTimeout(demoDebounceTimer);
+  demoDebounceTimer = setTimeout(renderDemo, 80);
+}
+
+METRICS.forEach(function(m){
+  var input = document.getElementById("s-" + m);
+  var output = document.getElementById("o-" + m);
+  input.addEventListener("input", function(){
+    output.textContent = input.value;
+    scheduleRender();
+  });
+});
+document.getElementById("s-budget").addEventListener("input", scheduleRender);
+
+document.querySelectorAll(".preset-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var preset = PRESETS[btn.getAttribute("data-preset")];
+    if (!preset) return;
+    METRICS.forEach(function(m){
+      var input = document.getElementById("s-" + m);
+      var output = document.getElementById("o-" + m);
+      input.value = preset[m];
+      output.textContent = preset[m];
+    });
+    document.getElementById("s-budget").value = preset.budget;
+    renderDemo();
+  });
+});
+
+/* ============================================================
+   Init
+   ============================================================ */
+applyLang(detectInitialLang());
+
+})();
+</script>
+</body>
+</html>
